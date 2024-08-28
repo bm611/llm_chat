@@ -1,4 +1,13 @@
 import reflex as rx
+import uuid
+
+
+class HeroState(rx.State):
+    """The app state."""
+
+    def create_chat(self):
+        new_chat_id = str(uuid.uuid4())
+        return rx.redirect(f"/chat/{new_chat_id}")
 
 
 def hero() -> rx.Component:
@@ -40,6 +49,7 @@ def hero() -> rx.Component:
                 rx.icon("arrow-up"),
                 class_name="rounded-full bg-gray-700 hover:bg-gray-400",
                 size="4",
+                on_click=HeroState.create_chat,
             ),
             class_name="w-full flex items-center",
         ),
