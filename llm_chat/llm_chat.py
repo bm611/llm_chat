@@ -2,13 +2,31 @@
 
 import reflex as rx
 from llm_chat.components.hero import hero
+from llm_chat.api import llm
 import uuid
+import google.generativeai as genai
+import os
+
+genai.configure(api_key=os.environ["GEMINI_API_KEY"])
+model = genai.GenerativeModel("gemini-1.5-flash")
 
 
 class State(rx.State):
     """The app state."""
 
     input_text: str = ""
+    models: list[str] = []
+    selected_model: str = ""
+    response: str = ""
+
+    def get_models(self):
+        self.models = llm.get_model_list(genai)
+
+    # def get_responses(self):
+    #     self.response = llm.get_response(model, self.input_text)
+
+    def set_selected_model(self, model: str):
+        self.selected_model = model
 
     def update_input(self, value: str):
         self.input_text = value
@@ -18,6 +36,8 @@ class State(rx.State):
 
     def create_chat(self):
         new_chat_id = str(uuid.uuid4())
+        self.response = llm.get_response(model, self.input_text)
+        self.input_text = ""
         return rx.redirect(f"/chat/{new_chat_id}")
 
     @rx.var
@@ -38,9 +58,38 @@ def index() -> rx.Component:
 
 @rx.page("/chat/[chat_id]", title="Chat Window")
 def chat():
-    return rx.vstack(
-        rx.text(f"Chat ID: {State.get_chat_id}"),
-        rx.text(f"Input: {State.input_text}"),
+    return rx.center(
+        rx.vstack(
+            rx.hstack(
+                rx.button(
+                    "Clear Chat",
+                    on_click=rx.redirect("/"),
+                    class_name="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded",
+                ),
+                rx.spacer(),
+                class_name="w-full p-4",
+            ),
+            rx.markdown(State.response),
+            rx.spacer(),
+            rx.hstack(
+                rx.input(
+                    placeholder="Ask a follow up",
+                    class_name="w-full h-14 px-5 rounded-full text-lg bg-transparent",
+                    on_change=State.update_input,
+                    value=State.input_text,
+                ),
+                rx.button(
+                    rx.icon("arrow-up"),
+                    class_name="rounded-full bg-gray-700 hover:bg-gray-400",
+                    size="4",
+                    # on_click=State.get_responses,
+                    type="submit",
+                ),
+                class_name="w-full flex items-center py-10",
+            ),
+            class_name="min-h-screen",
+        ),
+        class_name="max-w-screen-md mx-auto",
     )
 
 
