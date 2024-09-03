@@ -1,3 +1,6 @@
+import asyncio
+
+
 def get_model_list(genai):
     models = genai.list_models()
     res = []
@@ -7,5 +10,11 @@ def get_model_list(genai):
     return res
 
 
-def get_response(model, prompt):
-    return model.generate_content(prompt).text
+# def get_response(model, prompt):
+#     return model.generate_content(prompt).text
+
+
+async def get_response(model, prompt):
+    response = model.generate_content(prompt, stream=True)
+    for chunk in response:
+        yield chunk.text
