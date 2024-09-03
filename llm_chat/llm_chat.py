@@ -3,6 +3,7 @@
 import reflex as rx
 from llm_chat.components.hero import hero
 from llm_chat.components import nav
+from llm_chat.components import chat
 from llm_chat.api import llm
 import uuid
 import google.generativeai as genai
@@ -69,40 +70,8 @@ def index() -> rx.Component:
 
 
 @rx.page("/chat/[chat_id]", title="Chat Window", on_load=State.get_responses)
-def chat():
-    return rx.center(
-        rx.vstack(
-            rx.hstack(
-                rx.button(
-                    "Clear Chat",
-                    on_click=rx.redirect("/"),
-                    class_name="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded",
-                ),
-                rx.spacer(),
-                class_name="w-full p-4",
-            ),
-            rx.markdown(State.response),
-            rx.spacer(),
-            rx.hstack(
-                rx.input(
-                    placeholder="Ask a follow up",
-                    class_name="w-full h-14 px-5 rounded-full text-lg bg-transparent",
-                    on_change=State.update_input,
-                    value=State.input_text,
-                ),
-                rx.button(
-                    rx.icon("arrow-up"),
-                    class_name="rounded-full bg-gray-700 hover:bg-gray-400",
-                    size="4",
-                    # on_click=State.get_responses,
-                    type="submit",
-                ),
-                class_name="w-full flex items-center py-10",
-            ),
-            class_name="min-h-screen",
-        ),
-        class_name="max-w-screen-md mx-auto",
-    )
+def chat_page():
+    return chat.chat_window(State)
 
 
 style = {
