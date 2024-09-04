@@ -8,7 +8,7 @@ def display(val):
     return rx.vstack(
         rx.text(val[0], class_name="text-gray-400"),
         rx.markdown(val[1], class_name="text-xl"),
-        rx.spacer(),
+        class_name="mt-10",
     )
 
 
@@ -33,14 +33,14 @@ def chat_window(state) -> rx.Component:
                 ),
                 rx.button(
                     rx.icon("eraser"),
-                    class_name="rounded-full bg-gray-700 hover:bg-red-600",
+                    class_name="rounded-full bg-red-600",
                     size="4",
                     on_click=state.clear_history,
                     type="submit",
                 ),
-                class_name="w-full flex items-center py-10",
+                class_name="w-full flex items-center py-10 fixed bottom-0 left-0 right-0 mx-auto max-w-screen-lg",
             ),
             class_name="min-h-screen",
         ),
-        class_name="max-w-screen-md mx-auto p-10",
+        class_name="max-w-screen-lg mx-auto",
     )
