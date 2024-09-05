@@ -4,17 +4,17 @@ A simple chat application using Google's Gemini AI model.
 
 ## Installation
 
-1. Create a virtual environment and install Reflex:
-   ```
-   python -m venv venv
-   source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
-   pip install reflex
-   ```
-
-2. Clone the repository:
+1. Clone the repository:
    ```
    git clone <repository name>
    cd <repository name>
+   ```
+
+2. Create a virtual environment:
+   ```
+   python -m venv venv
+   source venv/bin/activate
+   pip install -r requirements.txt
    ```
 
 3. Set up the Gemini API key:

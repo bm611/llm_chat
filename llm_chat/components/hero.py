@@ -14,7 +14,8 @@ def hero(state) -> rx.Component:
         rx.box(
             rx.hstack(
                 rx.heading(
-                    "Hello, Bharath",
+                    "Hello, ",
+                    rx.text(state.character, as_="span"),
                     class_name="text-6xl tracking-wide font-regular text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-pink-500 to-orange-800",
                 ),
                 rx.icon(

@@ -6,6 +6,7 @@ from llm_chat.components import chat
 import uuid
 import google.generativeai as genai
 import os
+import random
 
 genai.configure(api_key=os.environ["GEMINI_API_KEY"])
 model = genai.GenerativeModel("gemini-1.5-flash")
@@ -44,6 +45,8 @@ class State(rx.State):
         "Aria Skysong",
         "Phoenix Ashborn",
     ]
+
+    character: str = random.choice(character_names)
 
     async def get_responses(self):
         self.is_generating = True
