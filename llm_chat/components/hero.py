@@ -1,4 +1,5 @@
 import reflex as rx
+import random
 
 
 def hero(state) -> rx.Component:
@@ -8,6 +9,7 @@ def hero(state) -> rx.Component:
         "How to pick ripe watermelon",
         "How much does a cloud weigh",
     ]
+    # character = random.choice(state.character_names)
     return rx.vstack(
         rx.box(
             rx.hstack(
@@ -70,4 +72,5 @@ def hero(state) -> rx.Component:
             class_name="w-full flex items-center",
         ),
         class_name="py-10 min-h-screen flex flex-col justify-between items-center",
+        # on_mount=state.get_models,
     )

@@ -1,23 +1,31 @@
 import reflex as rx
 
-# TODO: use chat.history to loop through "user" and "model" responses
-# create vstack of hstack of {USER ICON} : {USER INPUT} followed by {MODEL ICON} : {MODEL OUTPUT}
-# keep "CLEAR CHAT" and "INPUT FIELD" visible at all times
+
+def display(val):
+    return rx.vstack(
+        rx.heading(
+            val[0],
+            class_name="text-2xl font-regular text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-pink-500 to-orange-800",
+        ),
+        rx.markdown(val[1], class_name="text-xl"),
+        class_name="mt-10",
+    )
 
 
 def chat_window(state) -> rx.Component:
     return rx.center(
         rx.vstack(
-            rx.hstack(
-                rx.button(
-                    "Clear Chat",
-                    on_click=rx.redirect("/"),
-                    class_name="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded",
+            rx.box(
+                rx.vstack(
+                    rx.foreach(state.history_roles, display),
+                    spacing="2",
+                    align_items="stretch",
+                    # width="80%",
                 ),
-                rx.spacer(),
-                class_name="w-full p-4",
+                height="calc(100vh - 100px)",
+                overflow_y="auto",
+                padding_bottom="30px",
             ),
-            rx.markdown(state.response, class_name="text-xl"),
             rx.spacer(),
             rx.hstack(
                 rx.input(
@@ -30,12 +38,20 @@ def chat_window(state) -> rx.Component:
                     rx.icon("arrow-up"),
                     class_name="rounded-full bg-gray-700 hover:bg-gray-400",
                     size="4",
-                    # on_click=State.get_responses,
+                    on_click=state.get_responses,
                     type="submit",
                 ),
-                class_name="w-full flex items-center py-10",
+                rx.button(
+                    rx.icon("eraser"),
+                    class_name="rounded-full bg-red-600",
+                    size="4",
+                    on_click=state.clear_history,
+                    type="submit",
+                ),
+                class_name="w-full flex items-center py-10 fixed bottom-0 left-0 right-0 mx-auto max-w-screen-lg",
             ),
-            class_name="min-h-screen",
+            height="100vh",
+            width="100%",
         ),
-        class_name="max-w-screen-md mx-auto",
+        class_name="max-w-screen-lg mx-auto",
     )

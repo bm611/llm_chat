@@ -2,44 +2,59 @@
 
 import reflex as rx
 from llm_chat.components.hero import hero
-from llm_chat.components import nav
 from llm_chat.components import chat
-from llm_chat.api import llm
 import uuid
 import google.generativeai as genai
 import os
 
 genai.configure(api_key=os.environ["GEMINI_API_KEY"])
 model = genai.GenerativeModel("gemini-1.5-flash")
+chat_model = model.start_chat()
 
 
 class State(rx.State):
     """The app state."""
 
     input_text: str = ""
-    models: list[str] = []
-    selected_model: str = ""
     response: str = ""
     is_generating: bool = False
+    models: list[str] = []
+    history: list[str] = []
+    history_roles: list[tuple[str, str]] = []
 
-    def get_models(self):
-        self.models = llm.get_model_list(genai)
-
-    # def get_responses(self):
-    #     self.response = llm.get_response(model, self.input_text)
-    #     self.input_text = ""
+    character_names = [
+        "Zara Moonwhisper",
+        "Finnegan Stormrider",
+        "Lyra Nightshade",
+        "Thorne Blackthorn",
+        "Aura Swiftwind",
+        "Caspian Frostbeard",
+        "Ember Fireheart",
+        "Orion Stargazer",
+        "Nova Sundancer",
+        "Atlas Thunderbolt",
+        "Iris Dewdrop",
+        "Sage Whisperwind",
+        "Raven Shadowweaver",
+        "Felix Lightfoot",
+        "Luna Moonshadow",
+        "Jasper Thornheart",
+        "Willow Riverstone",
+        "Zephyr Cloudrunner",
+        "Aria Skysong",
+        "Phoenix Ashborn",
+    ]
 
     async def get_responses(self):
         self.is_generating = True
-        self.response = ""
-        async for chunk in llm.get_response(model, self.input_text):
-            self.response += chunk
-            yield
+        self.response = chat_model.send_message(self.input_text).text
+        self.history = [hist.parts[0].text for hist in chat_model.history]
+        self.history_roles = [
+            ("USER" if i % 2 == 0 else "ASSISTANT", msg)
+            for i, msg in enumerate(self.history)
+        ]
         self.is_generating = False
         self.input_text = ""
-
-    def set_selected_model(self, model: str):
-        self.selected_model = model
 
     def update_input(self, value: str):
         self.input_text = value
@@ -49,9 +64,13 @@ class State(rx.State):
 
     def create_chat(self):
         new_chat_id = str(uuid.uuid4())
-        # self.response = llm.get_response(model, self.input_text)
-        # self.input_text = ""
         return rx.redirect(f"/chat/{new_chat_id}")
+
+    def clear_history(self):
+        global chat_model
+        self.history = []
+        chat_model = model.start_chat()
+        return rx.redirect("/")
 
     @rx.var
     def get_chat_id(self) -> str:
