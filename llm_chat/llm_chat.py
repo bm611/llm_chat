@@ -71,7 +71,7 @@ class State(rx.State):
 
     def clear_history(self):
         global chat_model
-        self.history = []
+        self.history_roles = []
         chat_model = model.start_chat()
         return rx.redirect("/")
 

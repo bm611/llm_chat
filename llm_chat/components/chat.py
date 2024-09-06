@@ -21,6 +21,7 @@ def chat_window(state) -> rx.Component:
                     spacing="2",
                     align_items="stretch",
                     # width="80%",
+                    class_name="max-w-screen-lg",
                 ),
                 height="calc(100vh - 100px)",
                 overflow_y="auto",
