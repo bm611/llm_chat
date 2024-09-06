@@ -18,9 +18,19 @@ def chat_window(state) -> rx.Component:
             rx.box(
                 rx.vstack(
                     rx.foreach(state.history_roles, display),
+                    rx.cond(
+                        state.is_streaming,
+                        rx.vstack(
+                            rx.heading(
+                                "ASSISTANT",
+                                class_name="text-2xl font-regular text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-pink-500 to-orange-800",
+                            ),
+                            rx.markdown(state.current_response, class_name="text-xl"),
+                            class_name="mt-10",
+                        ),
+                    ),
                     spacing="2",
                     align_items="stretch",
-                    # width="80%",
                     class_name="max-w-screen-lg",
                 ),
                 height="calc(100vh - 100px)",
@@ -34,6 +44,7 @@ def chat_window(state) -> rx.Component:
                     class_name="w-full h-14 px-5 rounded-full text-lg bg-transparent",
                     on_change=state.update_input,
                     value=state.input_text,
+                    is_disabled=state.is_streaming,
                 ),
                 rx.button(
                     rx.icon("arrow-up"),
@@ -41,6 +52,7 @@ def chat_window(state) -> rx.Component:
                     size="4",
                     on_click=state.get_responses,
                     type="submit",
+                    is_disabled=state.is_streaming,
                 ),
                 rx.button(
                     rx.icon("eraser"),
@@ -48,6 +60,7 @@ def chat_window(state) -> rx.Component:
                     size="4",
                     on_click=state.clear_history,
                     type="submit",
+                    is_disabled=state.is_streaming,
                 ),
                 class_name="w-full flex items-center py-10 fixed bottom-0 left-0 right-0 mx-auto max-w-screen-lg",
             ),

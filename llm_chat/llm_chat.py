@@ -22,6 +22,8 @@ class State(rx.State):
     models: list[str] = []
     history: list[str] = []
     history_roles: list[tuple[str, str]] = []
+    current_response: str = ""
+    is_streaming: bool = False
 
     character_names = [
         "Zara Moonwhisper",
@@ -50,13 +52,19 @@ class State(rx.State):
 
     async def get_responses(self):
         self.is_generating = True
-        self.response = chat_model.send_message(self.input_text).text
+        self.is_streaming = True
+        self.current_response = ""
+        for chunk in chat_model.send_message(self.input_text, stream=True):
+            self.current_response += chunk.text
+            yield
+        self.response = self.current_response
         self.history = [hist.parts[0].text for hist in chat_model.history]
         self.history_roles = [
             ("USER" if i % 2 == 0 else "ASSISTANT", msg)
             for i, msg in enumerate(self.history)
         ]
         self.is_generating = False
+        self.is_streaming = False
         self.input_text = ""
 
     def update_input(self, value: str):
